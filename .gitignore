@@ -1,0 +1,7 @@
+#IDE admin files
+*.project
+*.mk
+iot-watchdog.txt
+
+#Debug folder
+Debug

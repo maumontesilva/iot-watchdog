@@ -3,5 +3,12 @@
 *.mk
 iot-watchdog.txt
 
+#output file
+*.out
+*.o
+
 #Debug folder
 Debug
+
+#Executable file
+src/iot-watchdog-application

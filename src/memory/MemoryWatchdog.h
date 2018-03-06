@@ -1,3 +1,5 @@
+#include "MonitoringType.h"
+
 #ifndef MEMORYWATCHDOG_H
 #define MEMORYWATCHDOG_H
 
@@ -5,8 +7,7 @@ class MemoryWatchdog
 {
 public:
 	MemoryWatchdog();
-	~MemoryWatchdog();
-	void getRunningProcesses();
+	void getRunningProcesses(MemoryMonitoringType);
 
 };
 

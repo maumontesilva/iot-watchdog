@@ -12,3 +12,8 @@ Debug
 
 #Executable file
 src/iot-watchdog-application
+
+#Eclipse files/folders
+/.metadata/
+.cproject
+.settings/

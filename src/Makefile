@@ -1,6 +1,8 @@
 # ****** Variable to set the compilation**************************
 CXX=g++
-CXXFLAGS=-Wall -g
+CXXFLAGS=-Wall -g -std=c++11
+# enable all warning
+# -g enable debug
 # ****************************************************************
 
 main: iot-watchdog-application.o memory.o	network.o

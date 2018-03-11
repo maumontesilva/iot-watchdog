@@ -37,7 +37,7 @@ std::vector<std::string> parsePSOutput(std::string line)
 	}
 
 	std::string cmd = "";
-	for(int index = 10; index < tokens.size(); index++)
+	for(unsigned int index = 10; index < tokens.size(); index++)
 	{
 		if(cmd == "") {
 			cmd.append(tokens[index]);
@@ -62,15 +62,18 @@ void PSMonitoring::run() {
 
 		for(std::string &line : lines)
 		{
-			std::cout << "Process : " << std::endl;
+			if(line != "")
+			{
+				std::cout << "Process : " << std::endl;
 
-			std::vector<std::string> psAttributes = parsePSOutput(line);
+				std::vector<std::string> psAttributes = parsePSOutput(line);
 
-			for (unsigned int index = 0; index < psAttributes.size(); index++) {
-				std::cout << "Index" << index << ": " << psAttributes[index] << std::endl;
+				for (unsigned int index = 0; index < psAttributes.size(); index++) {
+					std::cout << "Index" << index << ": " << psAttributes[index] << std::endl;
+				}
+
+				std::cout << std::endl;
 			}
-
-			std::cout << std::endl;
 		}
 	}
 }

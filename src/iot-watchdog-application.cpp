@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 
 #include "memory/MemoryWatchdog.h"
 #include "memory/MonitoringType.h"

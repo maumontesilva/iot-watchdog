@@ -7,6 +7,9 @@
 
 #include "StringHelper.h"
 
+const int ASCII_CHARACTER_0 = 48;
+const int ASCII_CHARACTER_9 = 57;
+
 StringHelper::StringHelper() {
 	// TODO Auto-generated constructor stub
 
@@ -44,4 +47,20 @@ std::vector<std::string> StringHelper::splitString(const std::string& str, const
     strings.push_back(str.substr(prev));
 
     return strings;
+}
+
+bool StringHelper::isInt(std::string number)
+{
+	bool result = true;
+
+	for(unsigned int index = 0; index < number.size(); index++)
+	{
+		int n = (int)number[index];
+		if(n < ASCII_CHARACTER_0 || n > ASCII_CHARACTER_9) { //Between 0 and 9 - ASCII code
+			result = false;
+			break;
+		}
+	}
+
+	return result;
 }

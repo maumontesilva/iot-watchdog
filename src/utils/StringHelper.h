@@ -16,6 +16,7 @@ public:
 
 	static std::string replaceAll(std::string str, const std::string& from, const std::string& to);
 	static std::vector<std::string> splitString(const std::string& str, const std::string& delimiter);
+	static bool isInt(std::string number);
 };
 
 #endif /* SRC_UTILS_STRINGHELPER_H_ */

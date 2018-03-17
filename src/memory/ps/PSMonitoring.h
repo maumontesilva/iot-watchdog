@@ -12,7 +12,7 @@ class PSMonitoring {
 public:
 	PSMonitoring();
 
-	void run();
+	std::vector<std::string> run();
 };
 
 #endif /* SRC_MEMORY_PS_PSMONITORING_H_ */

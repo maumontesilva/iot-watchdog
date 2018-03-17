@@ -63,7 +63,7 @@ std::string parsePSOutput(std::string line)
 	return result;
 }
 
-void PSMonitoring::run() {
+std::vector<std::string> PSMonitoring::run() {
 	std::vector<std::string> cvsReport;
 	std::string result = CommandExecutor::runCommand(PS_COMMAND);
 
@@ -84,9 +84,6 @@ void PSMonitoring::run() {
 			}
 		}
 	}
-	std::cout << "CVS Report: " << std::endl;
 
-	for (unsigned int index = 0; index < cvsReport.size(); index++) {
-		std::cout << "Index" << index << ": " << cvsReport[index] << std::endl;
-	}
+	return cvsReport;
 }

@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <vector>
 
 #include "MemoryWatchdog.h"
 #include "MonitoringType.h"
@@ -9,13 +11,15 @@ MemoryWatchdog::MemoryWatchdog()
 	
 }
 
-void MemoryWatchdog::getRunningProcesses(MemoryMonitoringType memoryMonitoringType)
+std::vector<std::string> MemoryWatchdog::getRunningProcesses(MemoryMonitoringType memoryMonitoringType)
 {
+	std::vector<std::string> memoryReport;
+
 	PSMonitoring a {};
 
 	switch(memoryMonitoringType) {
 	case MemoryMonitoringType::psmonitoring:
-		a.run();
+		memoryReport = a.run();
 
 		break;
 	case MemoryMonitoringType::procmonitoring:
@@ -28,4 +32,6 @@ void MemoryWatchdog::getRunningProcesses(MemoryMonitoringType memoryMonitoringTy
 	/*
 	 * TO DO: USE INHERITANCE TO RUN HERE!
 	 */
+
+	return memoryReport;
 }

@@ -6,7 +6,7 @@ CXXFLAGS=-Wall -g -std=c++11
 # ****************************************************************
 
 main: iot-watchdog-application.o memory.o	network.o
-	$(CXX) $(CXXFLAGS) -o iot-watchdog-application \
+	$(CXX) $(CXXFLAGS) -pthread -o iot-watchdog-application \
 			iot-watchdog-application.o \
 			memory/MemoryWatchdog.o \
 			network/NetworkingWatchdog.o \

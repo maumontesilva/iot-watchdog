@@ -7,7 +7,7 @@ class MemoryWatchdog
 {
 public:
 	MemoryWatchdog();
-	void getRunningProcesses(MemoryMonitoringType);
+	std::vector<std::string> getRunningProcesses(MemoryMonitoringType);
 
 };
 

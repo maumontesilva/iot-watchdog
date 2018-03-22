@@ -1,18 +1,23 @@
 # ****** Variable to set the compilation**************************
 CXX=g++
 CXXFLAGS=-Wall -g -std=c++11
+LIB_MOSQUITTO=-lmosquitto
+PTHREAD=-pthread
 # enable all warning
 # -g enable debug
 # ****************************************************************
 
-main: iot-watchdog-application.o memory.o	network.o
-	$(CXX) $(CXXFLAGS) -pthread -o iot-watchdog-application \
-			iot-watchdog-application.o \
-			memory/MemoryWatchdog.o \
-			network/NetworkingWatchdog.o \
-			memory/ps/PSMonitoring.o \
-			utils/CommandExecutor.o \
-			utils/StringHelper.o
+main: iot-watchdog-application.o memory.o network.o report.o sender.o
+	$(CXX) $(CXXFLAGS) $(PTHREAD) \
+			-o iot-watchdog-application \
+				iot-watchdog-application.o \
+				memory/MemoryWatchdog.o \
+				network/NetworkingWatchdog.o \
+				memory/ps/PSMonitoring.o \
+				utils/CommandExecutor.o \
+				utils/StringHelper.o \
+				report/Report.o \
+				sender/ReportSender.o $(LIB_MOSQUITTO)
 
 # Compile the object file only
 iot-watchdog-application.o:
@@ -33,6 +38,12 @@ commandExecutor.o:
 stringHelper.o:
 	$(CXX) $(CXXFLAGS) -c utils/StringHelper.cpp -o utils/StringHelper.o
 
+report.o:
+	$(CXX) $(CXXFLAGS) -c report/Report.cpp -o report/Report.o
+
+sender.o:
+	$(CXX) $(CXXFLAGS) -c sender/ReportSender.cpp -o sender/ReportSender.o $(LIB_MOSQUITTO)
+	
 clean:
 	rm -f iot-watchdog-application
 	rm -f *.o
@@ -41,3 +52,5 @@ clean:
 	rm -f memory/proc/*.o
 	rm -f network/*.o
 	rm -f utils/*.o
+	rm -f report/*.o
+	rm -f sender/*.o

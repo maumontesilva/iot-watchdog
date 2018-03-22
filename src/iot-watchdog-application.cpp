@@ -9,6 +9,8 @@
 
 #include "memory/MemoryWatchdog.h"
 #include "memory/MonitoringType.h"
+#include "report/Report.h"
+#include "sender/ReportSender.h"
 
 const int ONLY_PROGRAM_NAME = 1;
 const std::chrono::minutes INTERVAL_PERIOD_MINUTES{5};
@@ -56,11 +58,15 @@ int main(int argc, char **argv)
 		auto networkReport = futureNetworkObj.get();
 		auto memoryReport = futureMemoryObj.get();
 
-		std::cout << "NETWORK REPORT SIZE: " << networkReport.size() <<std::endl;
-		std::cout << "MEMORY REPORT SIZE: " << memoryReport.size() <<std::endl;
-
 		networkThread.join();
 		memoryThread.join();
+
+		Report report {memoryReport, networkReport};
+		ReportSender sender {};
+
+		sender.sendReport(report);
+
+//		std::cout << "Report to be sent : " << report.generateReport() << std::endl;
 
 		NextStartTime = currentStartTime + INTERVAL_PERIOD_MINUTES;
 		std::time_t NextStartEpochTime = std::chrono::system_clock::to_time_t(NextStartTime);

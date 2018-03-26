@@ -6,30 +6,33 @@
 #include <vector>
 #include <thread>
 #include <future>
+#include <map>
 
 #include "memory/MemoryWatchdog.h"
 #include "memory/MonitoringType.h"
 #include "report/Report.h"
 #include "sender/ReportSender.h"
 
+const std::string USAGE_MESSAGE {"USAGE: ./iot-watchdog-application [-c/--config <config file path>] [-h / --help]"};
 const int ONLY_PROGRAM_NAME = 1;
-const std::chrono::minutes INTERVAL_PERIOD_MINUTES{5};
+const int HEARTBEAT_PERIOD = 5;
 
-void validateInputArguments(int argc, char **argv);
+std::map<std::string, std::string> validateInputArguments(int argc, char **argv);
 void initiallizeMemoryThread(MemoryMonitoringType memoryMonitoringType, std::promise<std::vector<std::string>> * promiseMemoryObj);
 void initiallizeNetworkThread(std::promise<std::vector<std::string>> * promiseNetworkObj);
 
 /*
- * ./iot-watchdog-application [-m psmonitoring | procmonitoring ] [ -h | --help ]
+ * ./iot-watchdog-application [-c <config file path>] | [-m psmonitoring | procmonitoring ] [ -h | --help ]
  *
  * psmonitoring: It is the default value for memory monitoring
+ * procmonitoring
  *
  */
 int main(int argc, char **argv)
 {
 	try
 	{
-		validateInputArguments(argc, argv);
+		std::map<std::string, std::string> arguments = validateInputArguments(argc, argv);
 	} catch(const std::invalid_argument& exception)
 	{
 		std::cout << "Error: " << exception.what() << std::endl;
@@ -66,8 +69,7 @@ int main(int argc, char **argv)
 
 		sender.sendReport(report);
 
-//		std::cout << "Report to be sent : " << report.generateReport() << std::endl;
-
+		const std::chrono::minutes INTERVAL_PERIOD_MINUTES{HEARTBEAT_PERIOD};
 		NextStartTime = currentStartTime + INTERVAL_PERIOD_MINUTES;
 		std::time_t NextStartEpochTime = std::chrono::system_clock::to_time_t(NextStartTime);
 
@@ -79,12 +81,30 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-void validateInputArguments(int argc, char **argv)
+std::map<std::string, std::string> validateInputArguments(int argc, char **argv)
 {
-	if(argc != ONLY_PROGRAM_NAME)
+	std::map<std::string, std::string> arguments;
+
+	int count = 1; //First position skipping the program name
+	while(count < argc)
 	{
-		throw std::invalid_argument("Need to implement parsing arguments!");
+		std::string element = argv[count];
+		if( (element.compare("-c") == 0 || element.compare("--config") == 0) &&  (count+1) <= argc )
+		{
+			arguments.insert(std::make_pair("configFilePath", argv[count+1]));
+			count = count +2;
+		} else if(element.compare("-h") == 0 || element.compare("--help") == 0)
+		{
+			arguments.insert(std::make_pair("help", "true"));
+			count++;
+		}
+		else
+		{
+			throw std::invalid_argument(USAGE_MESSAGE);
+		}
 	}
+
+	return arguments;
 }
 
 void initiallizeMemoryThread(MemoryMonitoringType memoryMonitoringType, std::promise<std::vector<std::string>> * promiseMemoryObj)

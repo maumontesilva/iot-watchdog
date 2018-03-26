@@ -7,7 +7,7 @@ PTHREAD=-pthread
 # -g enable debug
 # ****************************************************************
 
-main: iot-watchdog-application.o memory.o network.o report.o sender.o
+main: iot-watchdog-application.o memory.o network.o report.o sender.o config.o
 	$(CXX) $(CXXFLAGS) $(PTHREAD) \
 			-o iot-watchdog-application \
 				iot-watchdog-application.o \
@@ -43,7 +43,10 @@ report.o:
 
 sender.o:
 	$(CXX) $(CXXFLAGS) -c sender/ReportSender.cpp -o sender/ReportSender.o $(LIB_MOSQUITTO)
-	
+
+config.o:
+	$(CXX) $(CXXFLAGS) -c config/Configuration.cpp -o config/Configuration.o
+
 clean:
 	rm -f iot-watchdog-application
 	rm -f *.o
@@ -54,3 +57,4 @@ clean:
 	rm -f utils/*.o
 	rm -f report/*.o
 	rm -f sender/*.o
+	rm -f config/*.o

@@ -17,9 +17,9 @@
  */
 
 // Server connection parameters
-#define MQTT_HOSTNAME "iot.eclipse.org"
+#define MQTT_HOSTNAME "test.mosquitto.org"
 #define MQTT_PORT 1883
-#define MQTT_TOPIC "/cit/2018/dissertation/report"
+#define MQTT_TOPIC "/cit/2018/dissertation/report/"
 
 ReportSender::ReportSender()
 {

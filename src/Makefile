@@ -17,6 +17,7 @@ main: iot-watchdog-application.o memory.o network.o report.o sender.o config.o
 				utils/CommandExecutor.o \
 				utils/StringHelper.o \
 				report/Report.o \
+				config/Configuration.o \
 				sender/ReportSender.o $(LIB_MOSQUITTO)
 
 # Compile the object file only

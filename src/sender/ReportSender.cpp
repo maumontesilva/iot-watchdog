@@ -98,9 +98,6 @@ ReportSender::ReportSender()
 
 	mosquitto_connect_callback_set(mosquitoStruct, connect_cb);
 	mosquitto_publish_callback_set(mosquitoStruct, publish_cb);
-//	mosquitto_log_callback_set(mosquitoStruct, log_cb);
-
-	//	mosquitto_tls_opts_set(mosquitoStruct, 1, NULL, NULL);
 
 	const char *cafile = "cert/server.crt";
 	rc = mosquitto_tls_set(mosquitoStruct, cafile, NULL, NULL, NULL, NULL);
@@ -114,16 +111,23 @@ ReportSender::ReportSender()
 	{
 		std::cout << "Error connecting to: " << MQTT_BROKER << ":" << MQTT_PORT << std::endl;
 	}
+}
+
+
+void ReportSender::sendReport(Report report)
+{
+	std::string reportStr = report.generateReport();
+
+	const char *reportRef = reportStr.c_str();
+
+	std::cout << "sending report with : " << strlen(reportRef) << " characters." << std::endl;
 
 	mosquitto_loop_start(mosquitoStruct);
 
 	do {
 		sleep(1);
-		std::cout << "STATUS: " << status << std::endl;
 		if(status == STATUS_CONNACK_RECVD)
 		{
-			const char * reportRef = "New Hello world with a new cert !!!";
-
 			// Publish the message to the topic
 		    mosquitto_publish (mosquitoStruct, NULL, MQTT_TOPIC,
 				      strlen(reportRef), reportRef, 0, false);
@@ -138,35 +142,4 @@ ReportSender::ReportSender()
 
     mosquitto_destroy (mosquitoStruct);
     mosquitto_lib_cleanup();
-}
-
-
-void ReportSender::sendReport(Report report)
-{
-//	std::string reportStr = report.generateReport();
-//
-//	const char *reportRef = reportStr.c_str();
-//	//const char *reportRef = "{ Hello Word! }";
-//
-//	std::cout << "sending report with : " << strlen(reportRef) << " characters." << std::endl;
-//
-//    // Publish the message to the topic
-//    int ret = mosquitto_publish (mosquitoStruct, NULL, MQTT_TOPIC,
-//	      strlen(reportRef), reportRef, 0, false);
-//    std::cout << "PUBLISH RET: " << ret << std::endl;
-//    if (ret)
-//    {
-//	    fprintf (stderr, "Can't publish to Mosquitto server\n");
-//	    exit (-1);
-//    }
-//
-    // We need a short delay here, to prevent the Mosquitto library being
-	//  torn down by the operating system before all the network operations
-	//  are finished.
-//	sleep (20);
-
-	// Tidy up
-//	mosquitto_disconnect (mosquitoStruct);
-//	mosquitto_destroy (mosquitoStruct);
-//	mosquitto_lib_cleanup();
 }

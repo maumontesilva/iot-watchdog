@@ -12,12 +12,16 @@
 #include "memory/MonitoringType.h"
 #include "report/Report.h"
 #include "sender/ReportSender.h"
+#include "config/Configuration.h"
 
 const std::string USAGE_MESSAGE {"USAGE: ./iot-watchdog-application [-c/--config <config file path>] [-h / --help]"};
-const int ONLY_PROGRAM_NAME = 1;
 const int HEARTBEAT_PERIOD = 5;
+const std::string HELP_ARGUMENT = "help";
+const std::string CONFIG_FILE_PATH_ARGUMENT = "configFilePath";
+const std::string DEFAULT_CONFIG_FILE = "./config.cfg";
 
-std::map<std::string, std::string> validateInputArguments(int argc, char **argv);
+void printHelp();
+void validateInputArguments(int argc, char **argv, std::map<std::string, std::string> &arguments);
 void initiallizeMemoryThread(MemoryMonitoringType memoryMonitoringType, std::promise<std::vector<std::string>> * promiseMemoryObj);
 void initiallizeNetworkThread(std::promise<std::vector<std::string>> * promiseNetworkObj);
 
@@ -31,14 +35,30 @@ void initiallizeNetworkThread(std::promise<std::vector<std::string>> * promiseNe
 
 int main(int argc, char **argv)
 {
+	std::map<std::string, std::string> arguments;
+	std::string configFile = DEFAULT_CONFIG_FILE;
+
 	try
 	{
-		std::map<std::string, std::string> arguments = validateInputArguments(argc, argv);
+		validateInputArguments(argc, argv, arguments);
+		if(arguments.count(HELP_ARGUMENT) == 1 && arguments[HELP_ARGUMENT] == "true")
+		{
+			printHelp();
+			exit(0);
+		}
+
+		if(arguments.count(CONFIG_FILE_PATH_ARGUMENT) == 1)
+		{
+			configFile = arguments[CONFIG_FILE_PATH_ARGUMENT];
+		}
 	} catch(const std::invalid_argument& exception)
 	{
-		std::cout << "Error: " << exception.what() << std::endl;
+		printHelp();
 		exit(-1);
 	}
+
+	Configuration *config = Configuration::getInstance(configFile);
+	config->setProperty("iot_watchdog_agent_uuid", "12");
 
 	std::chrono::system_clock::time_point currentStartTime;
 	std::chrono::system_clock::time_point NextStartTime;
@@ -82,21 +102,19 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-std::map<std::string, std::string> validateInputArguments(int argc, char **argv)
+void validateInputArguments(int argc, char **argv, std::map<std::string, std::string> &arguments)
 {
-	std::map<std::string, std::string> arguments;
-
 	int count = 1; //First position skipping the program name
 	while(count < argc)
 	{
 		std::string element = argv[count];
 		if( (element.compare("-c") == 0 || element.compare("--config") == 0) &&  (count+1) <= argc )
 		{
-			arguments.insert(std::make_pair("configFilePath", argv[count+1]));
+			arguments.insert(std::make_pair(CONFIG_FILE_PATH_ARGUMENT, argv[count+1]));
 			count = count +2;
 		} else if(element.compare("-h") == 0 || element.compare("--help") == 0)
 		{
-			arguments.insert(std::make_pair("help", "true"));
+			arguments.insert(std::make_pair(HELP_ARGUMENT, "true"));
 			count++;
 		}
 		else
@@ -104,8 +122,6 @@ std::map<std::string, std::string> validateInputArguments(int argc, char **argv)
 			throw std::invalid_argument(USAGE_MESSAGE);
 		}
 	}
-
-	return arguments;
 }
 
 void initiallizeMemoryThread(MemoryMonitoringType memoryMonitoringType, std::promise<std::vector<std::string>> * promiseMemoryObj)
@@ -122,4 +138,16 @@ void initiallizeNetworkThread(std::promise<std::vector<std::string>> * promiseNe
 	std::vector<std::string> tmp;
 
 	promiseNetworkObj->set_value(tmp);
+}
+
+void printHelp()
+{
+	std::cout << "*************************************************************************************************" << std::endl;
+	std::cout << "IoT Watchdog agent." << std::endl;
+	std::cout << "Project developed by Mauro Monteiro Silva - mauro.silva@mycit.ie" << std::endl;
+	std::cout << "This project was created as a thesis project for Information Security master at CIT Cork." << std::endl;
+	std::cout << "The IoT Watchdog agent collects, monitors and sends data from IoT device to the IoT hub." << std::endl;
+	std::cout << std::endl;
+	std::cout << USAGE_MESSAGE << std::endl;
+	std::cout << "*************************************************************************************************" << std::endl;
 }

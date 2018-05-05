@@ -12,10 +12,12 @@
 class Configuration {
 public:
 	~Configuration();
-	static Configuration* getInstance();
+	static Configuration* getInstance(std::string configFile);
+	void setProperty(std::string name, std::string value);
 
 private:
 	Configuration();
+	Configuration(std::string configFile);
     static bool instanceFlag;
     static Configuration *instance;
 };

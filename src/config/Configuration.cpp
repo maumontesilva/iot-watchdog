@@ -15,18 +15,28 @@ Configuration::Configuration()
 
 }
 
+Configuration::Configuration(std::string configFile)
+{
+
+}
+
 Configuration::~Configuration()
 {
 	instanceFlag = false;
 }
 
-Configuration* Configuration::getInstance()
+Configuration* Configuration::getInstance(std::string configFile)
 {
     if(!instanceFlag)
     {
-        instance = new Configuration();
+        instance = new Configuration(configFile);
         instanceFlag = true;
     }
 
     return instance;
+}
+
+void Configuration::setProperty(std::string name, std::string value)
+{
+	std::cout << "setProperty test name : " << name << " value: " << value << std::endl;
 }

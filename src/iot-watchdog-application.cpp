@@ -15,12 +15,12 @@
 #include "config/Configuration.h"
 
 const std::string USAGE_MESSAGE {"USAGE: ./iot-watchdog-application [-c/--config <config file path>] [-h / --help]"};
-const int HEARTBEAT_PERIOD = 5;
 const std::string HELP_ARGUMENT = "help";
 const std::string CONFIG_FILE_PATH_ARGUMENT = "configFilePath";
 const std::string DEFAULT_CONFIG_FILE = "./config.cfg";
 
 void printHelp();
+void registerIoTWatchdog(Configuration *config);
 void validateInputArguments(int argc, char **argv, std::map<std::string, std::string> &arguments);
 void initiallizeMemoryThread(MemoryMonitoringType memoryMonitoringType, std::promise<std::vector<std::string>> * promiseMemoryObj);
 void initiallizeNetworkThread(std::promise<std::vector<std::string>> * promiseNetworkObj);
@@ -55,10 +55,19 @@ int main(int argc, char **argv)
 	{
 		printHelp();
 		exit(-1);
+	} catch(const std::exception& exception)
+	{
+		std::cout << exception.what() << std::endl;
+		exit(-2);
 	}
 
 	Configuration *config = Configuration::getInstance(configFile);
-	config->setProperty("iot_watchdog_agent_uuid", "12");
+
+	if(config->getIoTWatchdogAgentNeedRegistration())
+	{
+		registerIoTWatchdog(config);
+		config->setIoTWatchdogAgentNeedRegistration(false);
+	}
 
 	std::chrono::system_clock::time_point currentStartTime;
 	std::chrono::system_clock::time_point NextStartTime;
@@ -90,7 +99,7 @@ int main(int argc, char **argv)
 
 		sender.sendReport(report);
 
-		const std::chrono::minutes INTERVAL_PERIOD_MINUTES{HEARTBEAT_PERIOD};
+		const std::chrono::minutes INTERVAL_PERIOD_MINUTES{config->getHeartbeatInMinutes()};
 		NextStartTime = currentStartTime + INTERVAL_PERIOD_MINUTES;
 		std::time_t NextStartEpochTime = std::chrono::system_clock::to_time_t(NextStartTime);
 
@@ -150,4 +159,9 @@ void printHelp()
 	std::cout << std::endl;
 	std::cout << USAGE_MESSAGE << std::endl;
 	std::cout << "*************************************************************************************************" << std::endl;
+}
+
+void registerIoTWatchdog(Configuration *config)
+{
+
 }

@@ -23,9 +23,7 @@ const char* PS_COMMAND = "ps -aux";
 const char* PS_DELIMITER = " ";
 const char* CVS_DELIMITER = ";;;;";
 
-PSMonitoring::PSMonitoring() {
-	// TODO Auto-generated constructor stub
-}
+PSMonitoring::PSMonitoring() {}
 
 std::string parsePSOutput(std::string line)
 {

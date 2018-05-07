@@ -10,10 +10,7 @@
 
 #include "CommandExecutor.h"
 
-CommandExecutor::CommandExecutor()
-{
-	// TODO Auto-generated constructor stub
-}
+CommandExecutor::CommandExecutor() {}
 
 std::string CommandExecutor::runCommand(const char* command)
 {

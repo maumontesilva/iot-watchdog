@@ -10,7 +10,7 @@
 
 #include "memory/MemoryWatchdog.h"
 #include "memory/MonitoringType.h"
-#include "report/Report.h"
+#include "report/data/DataReport.h"
 #include "sender/ReportSender.h"
 #include "config/Configuration.h"
 
@@ -94,10 +94,10 @@ int main(int argc, char **argv)
 		networkThread.join();
 		memoryThread.join();
 
-		Report report {memoryReport, networkReport};
+		DataReport dataReport {memoryReport, networkReport};
 		ReportSender sender {};
 
-		sender.sendReport(report);
+		sender.sendReport(&dataReport);
 
 		const std::chrono::minutes INTERVAL_PERIOD_MINUTES{config->getHeartbeatInMinutes()};
 		NextStartTime = currentStartTime + INTERVAL_PERIOD_MINUTES;

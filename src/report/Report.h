@@ -12,12 +12,10 @@
 
 class Report {
 public:
-	Report(std::vector<std::string> memReport, std::vector<std::string> netReport);
-	std::string generateReport();
+	virtual std::string generateReport() = 0;
+	virtual std::string getTopic() = 0;
 
-private:
-	std::vector<std::string> memoryReport;
-	std::vector<std::string> networkReport;
+	virtual ~Report();
 };
 
 #endif /* SRC_REPORT_REPORT_H_ */

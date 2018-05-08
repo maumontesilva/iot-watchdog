@@ -15,7 +15,7 @@ class ReportSender {
 public:
 	ReportSender();
 
-	void sendReport(Report report);
+	void sendReport(Report *report);
 private:
 	struct mosquitto *mosquitoStruct = NULL;
 };

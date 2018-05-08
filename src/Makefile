@@ -17,6 +17,9 @@ main: iot-watchdog-application.o memory.o network.o report.o sender.o config.o
 				utils/CommandExecutor.o \
 				utils/StringHelper.o \
 				report/Report.o \
+				report/data/DataReport.o \
+				report/reboot/RebootReport.o \
+				report/registration/RegistrationReport.o \
 				config/Configuration.o \
 				sender/ReportSender.o $(LIB_MOSQUITTO)
 
@@ -41,6 +44,9 @@ stringHelper.o:
 
 report.o:
 	$(CXX) $(CXXFLAGS) -c report/Report.cpp -o report/Report.o
+	$(CXX) $(CXXFLAGS) -c report/data/DataReport.cpp -o report/data/DataReport.o
+	$(CXX) $(CXXFLAGS) -c report/reboot/RebootReport.cpp -o report/reboot/RebootReport.o
+	$(CXX) $(CXXFLAGS) -c report/registration/RegistrationReport.cpp -o report/registration/RegistrationReport.o
 
 sender.o:
 	$(CXX) $(CXXFLAGS) -c sender/ReportSender.cpp -o sender/ReportSender.o $(LIB_MOSQUITTO)
@@ -57,5 +63,8 @@ clean:
 	rm -f network/*.o
 	rm -f utils/*.o
 	rm -f report/*.o
+	rm -f report/data/*.o
+	rm -f report/reboot/*.o
+	rm -f report/registration/*.o
 	rm -f sender/*.o
 	rm -f config/*.o

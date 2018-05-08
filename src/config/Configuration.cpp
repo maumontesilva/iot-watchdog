@@ -77,6 +77,11 @@ Configuration* Configuration::getInstance(std::string configFile)
     return instance;
 }
 
+Configuration* Configuration::getInstance()
+{
+	return Configuration::getInstance("");
+}
+
 void Configuration::checkMandantoryProperties()
 {
 	if(mqtt_broker_host.size() == 0
@@ -99,21 +104,6 @@ std::string Configuration::getMQTTBrokerHost()
 int Configuration::getMQTTBrokerPort()
 {
 	return mqtt_broker_port;
-}
-
-std::string Configuration::getMQTTDataTopic()
-{
-	return "/cit/msc/iot/watchdog/device";
-}
-
-std::string Configuration::getMQTTRegistrationTopic()
-{
-	return "/cit/msc/iot/watchdog/registration";
-}
-
-std::string Configuration::getMQTTRebootTopic()
-{
-	return "/cit/msc/iot/watchdog/reboot";
 }
 
 std::string Configuration::getIoTWatchdogAgentCertificate()

@@ -14,12 +14,11 @@
 class Configuration {
 public:
 	static Configuration* getInstance(std::string configFile);
+	static Configuration* getInstance();
+
 	int getHeartbeatInMinutes();
 	std::string getMQTTBrokerHost();
 	int getMQTTBrokerPort();
-	std::string getMQTTDataTopic();
-	std::string getMQTTRegistrationTopic();
-	std::string getMQTTRebootTopic();
 	std::string getIoTWatchdogAgentCertificate();
 	std::string getIoTWatchdogAgentUUID();
 	bool getIoTWatchdogAgentNeedRegistration();

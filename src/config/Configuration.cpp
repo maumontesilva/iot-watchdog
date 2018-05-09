@@ -11,22 +11,27 @@
 
 #include "Configuration.h"
 
-//std::map<std::string, std::string> Configuration::iotWatchdogProperties {};
 bool Configuration::instanceFlag = false;
 Configuration *Configuration::instance = NULL;
 
 const std::string HEARTBEAT_PERIOD_IN_MINUTES = "heartbeat_period_in_minutes";
+const std::string MQTT_BROKER_HOST = "mqtt_broker_host";
+const std::string MQTT_BROKER_PORT = "mqtt_broker_port";
+const std::string IOT_WATCHDOG_AGENT_UUID = "iot_watchdog_agent_uuid";
+const std::string IOT_WATCHDOG_AGENT_NEED_REGISTRATION = "iot_watchdog_agent_need_registration";
 
+std::string configFile;
 int heartbeat_period_in_minutes = 5;
 std::string mqtt_broker_host;
 int mqtt_broker_port=0;
 std::string iot_watchdog_agent_uuid;
 bool iot_watchdog_agent_need_registration=true;
 
-Configuration::Configuration(std::string configFile)
+Configuration::Configuration(std::string cfgFile)
 {
-	std::ifstream configFileStream {configFile};
-	if(!configFileStream) throw std::runtime_error("configuration file " + configFile + " not found!");
+	configFile = cfgFile;
+	std::ifstream configFileStream {cfgFile};
+	if(!configFileStream) throw std::runtime_error("configuration file " + cfgFile + " not found!");
 
 	std::string line;
 	while(configFileStream >> line)
@@ -37,19 +42,19 @@ Configuration::Configuration(std::string configFile)
 			std::string propertyName = line.substr(0, delimeterPostion);
 			std::string propertyValue = line.substr(delimeterPostion+1);
 
-			if(propertyName.compare("heartbeat_period_in_minutes") == 0)
+			if(propertyName.compare(HEARTBEAT_PERIOD_IN_MINUTES) == 0)
 			{
 				heartbeat_period_in_minutes = atoi(propertyValue.c_str());
-			} else if(propertyName.compare("mqtt_broker_host") == 0)
+			} else if(propertyName.compare(MQTT_BROKER_HOST) == 0)
 			{
 				mqtt_broker_host = propertyValue;
-			} else if(propertyName.compare("mqtt_broker_port") == 0)
+			} else if(propertyName.compare(MQTT_BROKER_PORT) == 0)
 			{
 				mqtt_broker_port = atoi(propertyValue.c_str());
-			} else if(propertyName.compare("iot_watchdog_agent_uuid") == 0)
+			} else if(propertyName.compare(IOT_WATCHDOG_AGENT_UUID) == 0)
 			{
 				iot_watchdog_agent_uuid = propertyValue;
-			} else if(propertyName.compare("iot_watchdog_agent_need_registration") == 0)
+			} else if(propertyName.compare(IOT_WATCHDOG_AGENT_NEED_REGISTRATION) == 0)
 			{
 				iot_watchdog_agent_need_registration = propertyValue.compare("yes") == 0 ? true : false;
 			}
@@ -66,11 +71,11 @@ Configuration::~Configuration()
 	instanceFlag = false;
 }
 
-Configuration* Configuration::getInstance(std::string configFile)
+Configuration* Configuration::getInstance(std::string cfgFile)
 {
     if(!instanceFlag)
     {
-        instance = new Configuration(configFile);
+        instance = new Configuration(cfgFile);
         instanceFlag = true;
     }
 
@@ -106,11 +111,6 @@ int Configuration::getMQTTBrokerPort()
 	return mqtt_broker_port;
 }
 
-std::string Configuration::getIoTWatchdogAgentCertificate()
-{
-	return "cert/server.crt";
-}
-
 std::string Configuration::getIoTWatchdogAgentUUID()
 {
 	return iot_watchdog_agent_uuid;
@@ -124,5 +124,21 @@ bool Configuration::getIoTWatchdogAgentNeedRegistration()
 void Configuration::setIoTWatchdogAgentNeedRegistration(bool needRegistration)
 {
 	iot_watchdog_agent_need_registration = needRegistration;
-	//persist the change to a file
+	saveConfigFile();
+}
+
+void Configuration::saveConfigFile()
+{
+	std::cout << "save new configuration ..." << std::endl;
+	std::ofstream configFileStream {configFile};
+	if(!configFileStream) throw std::runtime_error("configuration file " + configFile + " not found!");
+
+	configFileStream << HEARTBEAT_PERIOD_IN_MINUTES << "=" << heartbeat_period_in_minutes << std::endl;
+	configFileStream << MQTT_BROKER_HOST << "=" << mqtt_broker_host << std::endl;
+	configFileStream << MQTT_BROKER_PORT << "=" << mqtt_broker_port << std::endl;
+	configFileStream << IOT_WATCHDOG_AGENT_UUID << "=" << iot_watchdog_agent_uuid << std::endl;
+	std::string needRegistration = iot_watchdog_agent_need_registration ? "yes" : "no";
+	configFileStream << IOT_WATCHDOG_AGENT_NEED_REGISTRATION << "=" << needRegistration << std::endl;
+
+	configFileStream.close();
 }

@@ -11,6 +11,8 @@
 #include "memory/MemoryWatchdog.h"
 #include "memory/MonitoringType.h"
 #include "report/data/DataReport.h"
+#include "report/registration/RegistrationReport.h"
+#include "report/reboot/RebootReport.h"
 #include "sender/ReportSender.h"
 #include "config/Configuration.h"
 
@@ -20,7 +22,8 @@ const std::string CONFIG_FILE_PATH_ARGUMENT = "configFilePath";
 const std::string DEFAULT_CONFIG_FILE = "./config.cfg";
 
 void printHelp();
-void registerIoTWatchdog(Configuration *config);
+void registerIoTWatchdog(std::string iotWatchogAgentUUID);
+void informIoTWatchdogRebbot(std::string iotWatchogAgentUUID);
 void validateInputArguments(int argc, char **argv, std::map<std::string, std::string> &arguments);
 void initiallizeMemoryThread(MemoryMonitoringType memoryMonitoringType, std::promise<std::vector<std::string>> * promiseMemoryObj);
 void initiallizeNetworkThread(std::promise<std::vector<std::string>> * promiseNetworkObj);
@@ -65,9 +68,11 @@ int main(int argc, char **argv)
 
 	if(config->getIoTWatchdogAgentNeedRegistration())
 	{
-		registerIoTWatchdog(config);
+		registerIoTWatchdog(config->getIoTWatchdogAgentUUID());
 		config->setIoTWatchdogAgentNeedRegistration(false);
 	}
+
+	informIoTWatchdogRebbot(config->getIoTWatchdogAgentUUID());
 
 	std::chrono::system_clock::time_point currentStartTime;
 	std::chrono::system_clock::time_point NextStartTime;
@@ -161,7 +166,22 @@ void printHelp()
 	std::cout << "*************************************************************************************************" << std::endl;
 }
 
-void registerIoTWatchdog(Configuration *config)
+void registerIoTWatchdog(std::string iotWatchogAgentUUID)
 {
+	std::cout << "Registering IoT Watchdog agent ..." << std::endl;
 
+	RegistrationReport registrationReport {iotWatchogAgentUUID};
+	ReportSender sender {};
+
+	sender.sendReport(&registrationReport);
+}
+
+void informIoTWatchdogRebbot(std::string iotWatchogAgentUUID)
+{
+	std::cout << "Informing IoT Watchdog agent reboot ..." << std::endl;
+
+	RebootReport rebootReport {iotWatchogAgentUUID};
+	ReportSender sender {};
+
+	sender.sendReport(&rebootReport);
 }

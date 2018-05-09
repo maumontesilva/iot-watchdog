@@ -17,3 +17,5 @@ src/iot-watchdog-application
 /.metadata/
 .cproject
 .settings/
+
+*test*

@@ -67,8 +67,11 @@ std::vector<std::string> PSMonitoring::run() {
 
 	if(result.size() > 0)
 	{
-		std::vector<std::string> lines = StringHelper::splitString(result, "\n");
+		std::string header = "user" + std::string(CVS_DELIMITER) + "pid" + CVS_DELIMITER
+				+ "startdate" + CVS_DELIMITER + "time" + CVS_DELIMITER + "command";
+		cvsReport.push_back(header);
 
+		std::vector<std::string> lines = StringHelper::splitString(result, "\n");
 		for(std::string &line : lines)
 		{
 			if(line.size() > 0)

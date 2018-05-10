@@ -99,7 +99,7 @@ int main(int argc, char **argv)
 		networkThread.join();
 		memoryThread.join();
 
-		DataReport dataReport {memoryReport, networkReport};
+		DataReport dataReport {memoryReport, networkReport, config->getIoTWatchdogAgentUUID()};
 		ReportSender sender {};
 
 		sender.sendReport(&dataReport);

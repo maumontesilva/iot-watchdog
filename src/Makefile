@@ -14,6 +14,7 @@ main: iot-watchdog-application.o memory.o network.o report.o sender.o config.o
 				memory/MemoryWatchdog.o \
 				network/NetworkingWatchdog.o \
 				memory/ps/PSMonitoring.o \
+				network/netstat/NetstatMonitoring.o \
 				utils/CommandExecutor.o \
 				utils/StringHelper.o \
 				report/Report.o \
@@ -30,12 +31,15 @@ iot-watchdog-application.o:
 memory.o: ps-monitoring.o
 	$(CXX) $(CXXFLAGS) -c memory/MemoryWatchdog.cpp -o memory/MemoryWatchdog.o
 
-network.o:
+network.o: netstat-monitoring.o
 	$(CXX) $(CXXFLAGS) -c network/NetworkingWatchdog.cpp -o network/NetworkingWatchdog.o
 
 ps-monitoring.o: commandExecutor.o stringHelper.o
 	$(CXX) $(CXXFLAGS) -c memory/ps/PSMonitoring.cpp -o memory/ps/PSMonitoring.o
 
+netstat-monitoring.o: commandExecutor.o stringHelper.o
+	$(CXX) $(CXXFLAGS) -c network/netstat/NetstatMonitoring.cpp -o network/netstat/NetstatMonitoring.o
+	
 commandExecutor.o:
 	$(CXX) $(CXXFLAGS) -c utils/CommandExecutor.cpp -o utils/CommandExecutor.o
 	
@@ -61,6 +65,7 @@ clean:
 	rm -f memory/ps/*.o
 	rm -f memory/proc/*.o
 	rm -f network/*.o
+	rm -f network/netstat/*.o
 	rm -f utils/*.o
 	rm -f report/*.o
 	rm -f report/data/*.o

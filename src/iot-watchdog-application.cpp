@@ -10,6 +10,7 @@
 
 #include "memory/MemoryWatchdog.h"
 #include "memory/MonitoringType.h"
+#include "network/NetworkingWatchdog.h"
 #include "report/data/DataReport.h"
 #include "report/registration/RegistrationReport.h"
 #include "report/reboot/RebootReport.h"
@@ -149,9 +150,11 @@ void initiallizeMemoryThread(MemoryMonitoringType memoryMonitoringType, std::pro
 
 void initiallizeNetworkThread(std::promise<std::vector<std::string>> * promiseNetworkObj)
 {
-	std::vector<std::string> tmp;
+	NetworkingWatchdog networkWatchdog;
 
-	promiseNetworkObj->set_value(tmp);
+	std::vector<std::string> networkingReport = networkWatchdog.getRunningProcesses();
+
+	promiseNetworkObj->set_value(networkingReport);
 }
 
 void printHelp()

@@ -23,33 +23,10 @@
 static int status = STATUS_CONNECTING;
 static int msgSent = 0;
 
-struct brook_obj {
- unsigned long long published;
- unsigned long long connected;
- unsigned long long disconnected;
- unsigned long long loged;
-};
-
-/*
-static void log_cb(struct mosquitto *mosq, void *obj, int level, const char *str)
-{
-	std::cout << "LOG CALLBACK" << std::endl;
-
-// struct brook_obj *bobj = (struct brook_obj*) obj;
-// bobj->loged++;
-//        printf("%s(), connect:%llu, published:%llu, loged:%llu, level:%d,\n\tstr:%s\n",
-//  __FUNCTION__, bobj->connected, bobj->published, bobj->loged, level, str);
-}
-*/
-
 static void connect_cb(struct mosquitto *mosq, void *obj, int rc)
 {
 	std::cout << "Connected." << std::endl;
 
-//	struct brook_obj *bobj = (struct brook_obj*) obj;
-//	bobj->connected++;
-//		printf("%s(), connect:%llu, published:%llu, loged:%llu, rc:%d\n",
-//				__FUNCTION__, bobj->connected, bobj->published, bobj->loged, rc);
 	if(!rc) {
 		status = STATUS_CONNACK_RECVD;
 	}
@@ -58,11 +35,6 @@ static void connect_cb(struct mosquitto *mosq, void *obj, int rc)
 static void publish_cb(struct mosquitto *mosq, void *obj, int mid)
 {
 	std::cout << "Message published." << std::endl;
-
-// struct brook_obj *bobj = (struct brook_obj*) obj;
-// bobj->published++;
-//        printf("%s(), connect:%llu, published:%llu, loged:%llu, mid:%d\n",
-//  __FUNCTION__, bobj->connected, bobj->published, bobj->loged, mid);
 }
 
 ReportSender::ReportSender()
@@ -86,7 +58,6 @@ ReportSender::ReportSender()
 	mosquitto_publish_callback_set(mosquitoStruct, publish_cb);
 
 	const char *cafile = "cert/server.crt";
-//	const char *cafile = "cert/mosquitto.crt";
 	rc = mosquitto_tls_set(mosquitoStruct, cafile, NULL, NULL, NULL, NULL);
 	if(rc)
 	{
@@ -102,7 +73,6 @@ ReportSender::ReportSender()
 		std::cerr << "Failed to connect." << std::endl;
 	}
 }
-
 
 void ReportSender::sendReport(Report *report)
 {

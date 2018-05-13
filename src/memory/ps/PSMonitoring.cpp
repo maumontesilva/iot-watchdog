@@ -25,7 +25,7 @@ const char* CVS_DELIMITER = ";;;;";
 
 PSMonitoring::PSMonitoring() {}
 
-std::string parsePSOutput(std::string line)
+std::string PSMonitoring::parsePSOutput(std::string line)
 {
 	std::string result = "";
 

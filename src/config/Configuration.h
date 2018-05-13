@@ -27,7 +27,6 @@ private:
     static bool instanceFlag;
     static Configuration *instance;
 
-
     std::string configFile;
     int heartbeat_period_in_minutes;
     std::string mqtt_broker_host;

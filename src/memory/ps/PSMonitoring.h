@@ -13,6 +13,8 @@ public:
 	PSMonitoring();
 
 	std::vector<std::string> run();
+private:
+	std::string parsePSOutput(std::string line);
 };
 
 #endif /* SRC_MEMORY_PS_PSMONITORING_H_ */

@@ -70,33 +70,36 @@ ReportSender::ReportSender()
 	msgSent = 0;
 	int rc = 0;
 
-	Configuration *config = Configuration::getInstance("");
+	Configuration *config = Configuration::getInstance();
 
 	mosquitto_lib_init();
 
-	const char *id = "MAURO-PI";
+	std::string agentUUID = config->getIoTWatchdogAgentUUID();
+	const char *id = agentUUID.c_str();
 	mosquitoStruct = mosquitto_new (id, true, NULL);
 	if(!mosquitoStruct)
 	{
-		std::cout << "Failed to create mosquitto object." << std::endl;
+		std::cerr << "Failed to create mosquitto object. Error code: " << mosquitoStruct << std::endl;
 	}
 
 	mosquitto_connect_callback_set(mosquitoStruct, connect_cb);
 	mosquitto_publish_callback_set(mosquitoStruct, publish_cb);
 
 	const char *cafile = "cert/server.crt";
+//	const char *cafile = "cert/mosquitto.crt";
 	rc = mosquitto_tls_set(mosquitoStruct, cafile, NULL, NULL, NULL, NULL);
 	if(rc)
 	{
-		std::cout << "Error setting certificate." << std::endl;
+		std::cerr << "Error setting certificate. Error code: " << rc << std::endl;
 	}
 
 	const char *brokerHost = config->getMQTTBrokerHost().c_str();
 	const int brokerPort = config->getMQTTBrokerPort();
+	std::cout << "Trying to connect to: " << brokerHost << ":" << brokerPort << std::endl;
 	rc = mosquitto_connect(mosquitoStruct, brokerHost, brokerPort, 60);
 	if(rc)
 	{
-		std::cout << "Error connecting to: " << brokerHost << ":" << brokerPort << std::endl;
+		std::cerr << "Failed to connect." << std::endl;
 	}
 }
 

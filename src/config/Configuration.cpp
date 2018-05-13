@@ -17,19 +17,20 @@ Configuration *Configuration::instance = NULL;
 const std::string HEARTBEAT_PERIOD_IN_MINUTES = "heartbeat_period_in_minutes";
 const std::string MQTT_BROKER_HOST = "mqtt_broker_host";
 const std::string MQTT_BROKER_PORT = "mqtt_broker_port";
+const std::string MQTT_BROKER_CERTIFICATE = "mqtt_broker_certificate";
 const std::string IOT_WATCHDOG_AGENT_UUID = "iot_watchdog_agent_uuid";
 const std::string IOT_WATCHDOG_AGENT_NEED_REGISTRATION = "iot_watchdog_agent_need_registration";
-
-std::string configFile;
-int heartbeat_period_in_minutes = 5;
-std::string mqtt_broker_host;
-int mqtt_broker_port=0;
-std::string iot_watchdog_agent_uuid;
-bool iot_watchdog_agent_need_registration=true;
 
 Configuration::Configuration(std::string cfgFile)
 {
 	configFile = cfgFile;
+	heartbeat_period_in_minutes = 5;
+	mqtt_broker_host = "";
+	mqtt_broker_port=0;
+	mqtt_broker_certificate = std::string("cert/server.crt");
+	iot_watchdog_agent_uuid = "";
+	iot_watchdog_agent_need_registration=true;
+
 	std::ifstream configFileStream {cfgFile};
 	if(!configFileStream) throw std::runtime_error("configuration file " + cfgFile + " not found!");
 
@@ -57,6 +58,9 @@ Configuration::Configuration(std::string cfgFile)
 			} else if(propertyName.compare(IOT_WATCHDOG_AGENT_NEED_REGISTRATION) == 0)
 			{
 				iot_watchdog_agent_need_registration = propertyValue.compare("yes") == 0 ? true : false;
+			} else if(propertyName.compare(MQTT_BROKER_CERTIFICATE) == 0)
+			{
+				mqtt_broker_certificate = propertyValue;
 			}
 		}
 	}
@@ -90,7 +94,8 @@ Configuration* Configuration::getInstance()
 void Configuration::checkMandantoryProperties()
 {
 	if(mqtt_broker_host.size() == 0
-			|| iot_watchdog_agent_uuid.size() == 0 || mqtt_broker_port == 0)
+			|| iot_watchdog_agent_uuid.size() == 0
+			|| mqtt_broker_port == 0)
 	{
 		throw std::invalid_argument("Missing required properties!");
 	}
@@ -109,6 +114,11 @@ std::string Configuration::getMQTTBrokerHost()
 int Configuration::getMQTTBrokerPort()
 {
 	return mqtt_broker_port;
+}
+
+std::string Configuration::getMQTTBrokerCertificate()
+{
+	return mqtt_broker_certificate;
 }
 
 std::string Configuration::getIoTWatchdogAgentUUID()
@@ -136,6 +146,7 @@ void Configuration::saveConfigFile()
 	configFileStream << HEARTBEAT_PERIOD_IN_MINUTES << "=" << heartbeat_period_in_minutes << std::endl;
 	configFileStream << MQTT_BROKER_HOST << "=" << mqtt_broker_host << std::endl;
 	configFileStream << MQTT_BROKER_PORT << "=" << mqtt_broker_port << std::endl;
+	configFileStream << MQTT_BROKER_CERTIFICATE << "=" << mqtt_broker_certificate << std::endl;
 	configFileStream << IOT_WATCHDOG_AGENT_UUID << "=" << iot_watchdog_agent_uuid << std::endl;
 	std::string needRegistration = iot_watchdog_agent_need_registration ? "yes" : "no";
 	configFileStream << IOT_WATCHDOG_AGENT_NEED_REGISTRATION << "=" << needRegistration << std::endl;

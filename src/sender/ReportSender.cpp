@@ -47,6 +47,9 @@ ReportSender::ReportSender()
 	mosquitto_lib_init();
 
 	std::string agentUUID = config->getIoTWatchdogAgentUUID();
+	std::string hostName= config->getMQTTBrokerHost();
+	std::string certificate= config->getMQTTBrokerCertificate();
+
 	const char *id = agentUUID.c_str();
 	mosquitoStruct = mosquitto_new (id, true, NULL);
 	if(!mosquitoStruct)
@@ -57,14 +60,14 @@ ReportSender::ReportSender()
 	mosquitto_connect_callback_set(mosquitoStruct, connect_cb);
 	mosquitto_publish_callback_set(mosquitoStruct, publish_cb);
 
-	const char *cafile = "cert/server.crt";
+	const char *cafile = certificate.c_str();
 	rc = mosquitto_tls_set(mosquitoStruct, cafile, NULL, NULL, NULL, NULL);
 	if(rc)
 	{
 		std::cerr << "Error setting certificate. Error code: " << rc << std::endl;
 	}
 
-	const char *brokerHost = config->getMQTTBrokerHost().c_str();
+	const char *brokerHost = hostName.c_str();
 	const int brokerPort = config->getMQTTBrokerPort();
 	std::cout << "Trying to connect to: " << brokerHost << ":" << brokerPort << std::endl;
 	rc = mosquitto_connect(mosquitoStruct, brokerHost, brokerPort, 60);

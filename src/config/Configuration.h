@@ -19,6 +19,7 @@ public:
 	int getHeartbeatInMinutes();
 	std::string getMQTTBrokerHost();
 	int getMQTTBrokerPort();
+	std::string getMQTTBrokerCertificate();
 	std::string getIoTWatchdogAgentUUID();
 	bool getIoTWatchdogAgentNeedRegistration();
 	void setIoTWatchdogAgentNeedRegistration(bool needRegistration);
@@ -31,6 +32,7 @@ private:
     int heartbeat_period_in_minutes;
     std::string mqtt_broker_host;
     int mqtt_broker_port;
+    std::string mqtt_broker_certificate;
     std::string iot_watchdog_agent_uuid;
     bool iot_watchdog_agent_need_registration;
 

@@ -67,13 +67,13 @@ int main(int argc, char **argv)
 
 	Configuration *config = Configuration::getInstance(configFile);
 
-	if(config->getIoTWatchdogAgentNeedRegistration())
-	{
-		registerIoTWatchdog(config->getIoTWatchdogAgentUUID());
-		config->setIoTWatchdogAgentNeedRegistration(false);
-	}
-
-	informIoTWatchdogRebbot(config->getIoTWatchdogAgentUUID());
+//	if(config->getIoTWatchdogAgentNeedRegistration())
+//	{
+//		registerIoTWatchdog(config->getIoTWatchdogAgentUUID());
+//		config->setIoTWatchdogAgentNeedRegistration(false);
+//	}
+//
+//	informIoTWatchdogRebbot(config->getIoTWatchdogAgentUUID());
 
 	std::chrono::system_clock::time_point currentStartTime;
 	std::chrono::system_clock::time_point NextStartTime;
@@ -105,8 +105,8 @@ int main(int argc, char **argv)
 
 		sender.sendReport(&dataReport);
 
-		const std::chrono::minutes INTERVAL_PERIOD_MINUTES{config->getHeartbeatInMinutes()};
-		NextStartTime = currentStartTime + INTERVAL_PERIOD_MINUTES;
+		const std::chrono::seconds INTERVAL_PERIOD_SECONDS{config->getHeartbeatInSeconds()};
+		NextStartTime = currentStartTime + INTERVAL_PERIOD_SECONDS;
 		std::time_t NextStartEpochTime = std::chrono::system_clock::to_time_t(NextStartTime);
 
 		std::cout << "Next Watchdog agent execution is at " << std::ctime(&NextStartEpochTime)  << std::endl;

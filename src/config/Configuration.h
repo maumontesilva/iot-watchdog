@@ -16,7 +16,7 @@ public:
 	static Configuration* getInstance(std::string configFile);
 	static Configuration* getInstance();
 
-	int getHeartbeatInMinutes();
+	int getHeartbeatInSeconds();
 	std::string getMQTTBrokerHost();
 	int getMQTTBrokerPort();
 	std::string getMQTTBrokerCertificate();
@@ -29,7 +29,9 @@ private:
     static Configuration *instance;
 
     std::string configFile;
-    int heartbeat_period_in_minutes;
+    int heartbeat_period_in_seconds;
+    int heartbeat_period;
+    std::string heartbeat_period_unit;
     std::string mqtt_broker_host;
     int mqtt_broker_port;
     std::string mqtt_broker_certificate;
@@ -37,6 +39,7 @@ private:
     bool iot_watchdog_agent_need_registration;
 
     void checkMandantoryProperties();
+    int calculateHeartbeatInSeconds();
     void saveConfigFile();
 
 	Configuration(std::string cfgFile);
